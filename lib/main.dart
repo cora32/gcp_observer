@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gcp_observer/repo/repo.dart';
-import 'package:gcp_observer/repo/rest.dart';
 import 'package:gcp_observer/strings.dart';
-import 'package:get_it/get_it.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'gcp_dot.dart';
@@ -44,7 +41,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const Scaffold(
         body: Center(
-          child: ProviderScope(child: GCPDot()),
+          child: ProviderScope(child: GCPPanel()),
         ),
       ),
     );

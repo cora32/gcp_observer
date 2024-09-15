@@ -11,9 +11,12 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size(width, height),
-      painter: GCPChartPainter(data, width, height),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: CustomPaint(
+        size: Size(width, height),
+        painter: GCPChartPainter(data, width, height),
+      ),
     );
   }
 }
@@ -100,6 +103,6 @@ class GCPChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant GCPChartPainter oldDelegate) {
-    return data.length != oldDelegate.data.length;
+    return true;
   }
 }
