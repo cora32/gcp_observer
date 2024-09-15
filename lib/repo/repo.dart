@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -354,7 +355,7 @@ final test = '''
 <p i="344" a="0.5083658" t="0.4021108" q1="0.4597442" q3="0.5532568" b="0.5797509" />
 <p i="345" a="0.6169222" t="0.5274059" q1="0.5928657" q3="0.6402296" b="0.6759976" />
 <p i="346" a="0.6788211" t="0.6303776" q1="0.6621047" q3="0.6902525" b="0.7280128" />
-<p i="347" a="0.12" t="0.7144215" q1="0.7573417" q3="0.7972354" b="0.0020434" />
+<p i="347" a=".95" t="0.7144215" q1="0.7573417" q3="0.7972354" b="0.0020434" />
 </chart>
 
 ''';
@@ -365,6 +366,14 @@ class GCPData {
   final List<double> dataQ1;
   final List<double> dataQ3;
   final List<double> dataT;
+
+  double get value {
+    if (dataA.isEmpty) {
+      return -1;
+    }
+
+    return dataA.last;
+  }
 
   GCPData(
       {required this.dataA,
@@ -378,13 +387,17 @@ final rng = Random();
 
 @riverpod
 Future<GCPData> getParsedGcpData(GetParsedGcpDataRef ref) async {
+  print('--> getParsedGcpData!');
   const pixels = 348;
   const seconds = -86400;
   final nonce = rng.nextInt(9999999);
   // final result = await getGcpData(pixels, seconds, nonce);
 
-  final document = parse(test);
-  // final document = parse(result);
+  return compute(_parseHtml, test);
+}
+
+GCPData _parseHtml(String raw) {
+  final document = parse(raw);
 
   final dots = document.getElementsByTagName('p');
 

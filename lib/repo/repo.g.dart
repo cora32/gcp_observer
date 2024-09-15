@@ -6,7 +6,7 @@ part of 'repo.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getParsedGcpDataHash() => r'642d7533a8c1b82c36b0fb1c883c8230f3be2e8f';
+String _$getParsedGcpDataHash() => r'd350ae107ba265369d3fcb526e537fb08ad08b3d';
 
 /// See also [getParsedGcpData].
 @ProviderFor(getParsedGcpData)

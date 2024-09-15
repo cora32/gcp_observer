@@ -1,21 +1,48 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../utils/params.dart';
 
 class Chart extends StatelessWidget {
   final List<double> data;
   final double width;
   final double height;
+  final String label;
 
-  const Chart(this.data, this.width, this.height, {super.key});
+  const Chart(this.data, this.width, this.height, this.label, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: CustomPaint(
-        size: Size(width, height),
-        painter: GCPChartPainter(data, width, height),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: labelWidth,
+            child: Center(
+              child: Text(
+                label,
+                style: GoogleFonts.lato(
+                  textStyle: Theme.of(context).textTheme.displayLarge,
+                  fontSize: 20,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.w300,
+                  fontStyle: FontStyle.normal,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+              child: CustomPaint(
+            size: Size(width - labelWidth, height),
+            painter: GCPChartPainter(data, width - labelWidth, height),
+          ))
+        ],
       ),
     );
   }
