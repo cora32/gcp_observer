@@ -38,10 +38,11 @@ class Chart extends StatelessWidget {
             ),
           ),
           Expanded(
-              child: CustomPaint(
+              child: RepaintBoundary(
+                  child: CustomPaint(
             size: Size(width - labelWidth, height),
             painter: GCPChartPainter(data, width - labelWidth, height),
-          ))
+          )))
         ],
       ),
     );

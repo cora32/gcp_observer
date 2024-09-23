@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/widgets.dart';
 import 'package:gcp_observer/utils/strings.dart';
 
@@ -17,6 +19,19 @@ double getYPos(GlobalKey key) {
     Offset position = box.localToGlobal(Offset.zero);
     return position.dy;
   } else {
-    return 0.0;
+    return -1.0;
   }
+}
+
+double getHeight(GlobalKey key) {
+  if (key.currentContext != null) {
+    RenderBox box = key.currentContext!.findRenderObject() as RenderBox;
+    return box.size.height;
+  } else {
+    return -1.0;
+  }
+}
+
+extension StringE on String {
+  void get e => log('--> $this');
 }

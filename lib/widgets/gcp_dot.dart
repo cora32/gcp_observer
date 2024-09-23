@@ -66,10 +66,11 @@ class _GcpDotState extends State<GcpDot> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
+    return RepaintBoundary(
+        child: CustomPaint(
       size: Size(widget.size, widget.size),
       painter: GCPPainter(value, widget.size, widget.size),
-    );
+    ));
   }
 }
 

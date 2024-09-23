@@ -55,6 +55,7 @@ class _ContentScreenState extends State<_ContentScreen>
     fontWeight: FontWeight.w700,
     fontStyle: FontStyle.normal,
   );
+  GlobalKey keyUpper = GlobalKey();
   GlobalKey key1 = GlobalKey();
   GlobalKey key2 = GlobalKey();
   GlobalKey key3 = GlobalKey();
@@ -90,6 +91,7 @@ class _ContentScreenState extends State<_ContentScreen>
     const height = 500.0;
 
     return Row(
+      key: keyUpper,
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -99,46 +101,42 @@ class _ContentScreenState extends State<_ContentScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(key: key1, Strings.gcpDesc05, style: style),
-              const SizedBox(
-                height: 16,
-              ),
+              const DelimWhite(),
               Text(key: key2, Strings.gcpDesc510, style: style),
-              const SizedBox(
-                height: 16,
-              ),
+              const DelimWhite(),
               Text(key: key3, Strings.gcpDesc1040, style: style),
-              const SizedBox(
-                height: 16,
-              ),
+              const DelimWhite(),
               Text(key: key4, Strings.gcpDesc4090, style: style),
-              const SizedBox(
-                height: 16,
-              ),
+              const DelimWhite(),
               Text(key: key5, Strings.gcpDesc9095, style: style),
-              const SizedBox(
-                height: 16,
-              ),
+              const DelimWhite(),
               Text(key: key6, Strings.gcpDesc95100, style: style),
             ],
           ),
         ),
-        const SizedBox(
-          width: 24,
-        ),
-        CustomPaint(
-          painter: SliderPainter(
-            value,
-            height,
-            () => getYPos(key1),
-            () => getYPos(key2),
-            () => getYPos(key3),
-            () => getYPos(key4),
-            () => getYPos(key5),
-            () => getYPos(key6),
-          ),
-          child: const SizedBox(
-            height: height,
-            width: width,
+        RepaintBoundary(
+          child: CustomPaint(
+            painter: SliderPainter(
+              value,
+              height,
+              () => -getYPos(keyUpper),
+              () => getHeight(key1),
+              () => getHeight(key2),
+              () => getHeight(key3),
+              () => getHeight(key4),
+              () => getHeight(key5),
+              () => getHeight(key6),
+              () => getYPos(key1),
+              () => getYPos(key2),
+              () => getYPos(key3),
+              () => getYPos(key4),
+              () => getYPos(key5),
+              () => getYPos(key6),
+            ),
+            child: const SizedBox(
+              height: height,
+              width: width,
+            ),
           ),
         ),
       ],
@@ -206,10 +204,10 @@ class SliderPainter extends CustomPainter {
         ],
         List.generate(12, (i) => threshold * i));
   late final paint3 = Paint()
-    ..color = Colors.white
+    ..color = Colors.white54
     ..strokeCap = StrokeCap.round
     ..isAntiAlias = true
-    ..strokeWidth = 1
+    ..strokeWidth = 0.6
     ..strokeJoin = StrokeJoin.round
     ..style = PaintingStyle.stroke;
   double labelY1 = 0.0;
@@ -218,34 +216,72 @@ class SliderPainter extends CustomPainter {
   double labelY4 = 0.0;
   double labelY5 = 0.0;
   double labelY6 = 0.0;
+  double labelHeight1 = 0.0;
+  double labelHeight2 = 0.0;
+  double labelHeight3 = 0.0;
+  double labelHeight4 = 0.0;
+  double labelHeight5 = 0.0;
+  double labelHeight6 = 0.0;
+  double topYOffset = 0.0;
+  final double Function() topYOffsetFunc;
+  final double Function() labelYPosFunc1;
+  final double Function() labelYPosFunc2;
+  final double Function() labelYPosFunc3;
+  final double Function() labelYPosFunc4;
+  final double Function() labelYPosFunc5;
+  final double Function() labelYPosFunc6;
+  final double Function() labelHeightFunc1;
+  final double Function() labelHeightFunc2;
+  final double Function() labelHeightFunc3;
+  final double Function() labelHeightFunc4;
+  final double Function() labelHeightFunc5;
+  final double Function() labelHeightFunc6;
 
   SliderPainter(
     this.value,
     this.height,
-    double Function() labelYPosFunc1,
-    double Function() labelYPosFunc2,
-    double Function() labelYPosFunc3,
-    double Function() labelYPosFunc4,
-    double Function() labelYPosFunc5,
-    double Function() labelYPosFunc6,
+    this.topYOffsetFunc,
+    this.labelHeightFunc1,
+    this.labelHeightFunc2,
+    this.labelHeightFunc3,
+    this.labelHeightFunc4,
+    this.labelHeightFunc5,
+    this.labelHeightFunc6,
+    this.labelYPosFunc1,
+    this.labelYPosFunc2,
+    this.labelYPosFunc3,
+    this.labelYPosFunc4,
+    this.labelYPosFunc5,
+    this.labelYPosFunc6,
   ) {
+    topYOffset = topYOffsetFunc();
     labelY1 = labelYPosFunc1();
     labelY2 = labelYPosFunc2();
     labelY3 = labelYPosFunc3();
     labelY4 = labelYPosFunc4();
     labelY5 = labelYPosFunc5();
     labelY6 = labelYPosFunc6();
+    labelHeight1 = labelHeightFunc1();
+    labelHeight2 = labelHeightFunc2();
+    labelHeight3 = labelHeightFunc3();
+    labelHeight4 = labelHeightFunc4();
+    labelHeight5 = labelHeightFunc5();
+    labelHeight6 = labelHeightFunc6();
   }
 
-  void _drawScale(Canvas canvas, Size size, double perc, double labelY) {
+  void _drawScale(
+      Canvas canvas, Size size, double perc, double labelY, double height) {
     final percValue = perc * size.height;
     final p1 = Offset(size.width / 2 - 12, percValue);
     final p2 = Offset(size.width / 2 + 12, percValue);
-    var py1 = Offset(size.width / 2 - 12, percValue);
-    var py2 = Offset(0, labelY);
+    final py1 = Offset(size.width / 2 - 12, percValue);
+    final py2 = Offset(0, labelY + topYOffset + height / 2.0);
+    final ph1 = Offset(0, labelY + topYOffset);
+    final ph2 = Offset(0, labelY + topYOffset + height);
 
     canvas.drawLine(p1, p2, paint3);
     canvas.drawLine(py1, py2, paint3);
+    canvas.drawLine(ph1, ph2, paint3);
   }
 
   @override
@@ -257,12 +293,14 @@ class SliderPainter extends CustomPainter {
     canvas.drawLine(p1, p2, paint1);
 
     // Draw scale
-    _drawScale(canvas, size, 0.05, labelY1);
-    _drawScale(canvas, size, 0.1, labelY2);
-    _drawScale(canvas, size, 0.4, labelY3);
-    _drawScale(canvas, size, 0.9, labelY4);
-    _drawScale(canvas, size, 0.95, labelY5);
-    _drawScale(canvas, size, 1.0, labelY6);
+    if (labelY1 >= 0) {
+      _drawScale(canvas, size, 0.05, labelY1, labelHeight1);
+      _drawScale(canvas, size, 0.1, labelY2, labelHeight2);
+      _drawScale(canvas, size, 0.4, labelY3, labelHeight3);
+      _drawScale(canvas, size, 0.9, labelY4, labelHeight4);
+      _drawScale(canvas, size, 0.95, labelY5, labelHeight5);
+      _drawScale(canvas, size, 1.0, labelY6, labelHeight6);
+    }
 
     // Draw pointer
     final yPos = value * size.height;
@@ -278,5 +316,32 @@ class SliderPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant SliderPainter oldDelegate) {
     return value != oldDelegate.value;
+  }
+}
+
+class DelimWhite extends StatelessWidget {
+  const DelimWhite({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              stops: [
+            0.0,
+            0.3,
+            0.7,
+            1.0
+          ],
+              colors: [
+            Colors.white12,
+            Colors.white10,
+            Colors.transparent,
+            Colors.transparent,
+          ])),
+      height: 8,
+    );
   }
 }

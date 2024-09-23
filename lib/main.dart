@@ -57,10 +57,11 @@ class BG extends StatelessWidget {
     double newHeight = height - padding.top - padding.bottom;
     double chartHeight = 70;
 
-    return CustomPaint(
+    return RepaintBoundary(
+        child: CustomPaint(
       painter: BGPainter(width, newHeight),
       child: child,
-    );
+    ));
   }
 }
 

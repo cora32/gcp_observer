@@ -55,11 +55,16 @@ class LoadingScreen extends StatelessWidget {
   }
 }
 
-class ContentScreen extends StatelessWidget {
+class ContentScreen extends StatefulWidget {
   final GCPData data;
 
   const ContentScreen(this.data, {super.key});
 
+  @override
+  State<ContentScreen> createState() => _ContentScreenState();
+}
+
+class _ContentScreenState extends State<ContentScreen> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.sizeOf(context).width - 16;
@@ -69,6 +74,7 @@ class ContentScreen extends StatelessWidget {
     double chartHeight = 70;
 
     return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
       child: Padding(
         padding: EdgeInsets.only(top: padding.top + 24, bottom: 8),
         child: Column(
@@ -76,67 +82,107 @@ class ContentScreen extends StatelessWidget {
             // Title
             const GCPTitle(),
             // Dot
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32),
-              decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: [
-                    0.0,
-                    0.3,
-                    0.7,
-                    1.0
-                  ],
-                      colors: [
-                    Colors.transparent,
-                    Colors.black26,
-                    Colors.black26,
-                    Colors.transparent,
-                  ])),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // GCPDot
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        flex: 5,
-                        child: Description(data.dataA.last),
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Flexible(
-                        flex: 2,
-                        child: GcpDot(data.dataA.last, 80),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 32,
-                  ),
-                  // Slider
-                  const Align(
-                    alignment: Alignment.centerRight,
-                    child: GCPSlider(),
-                  ),
-                ],
-              ),
-            ),
+            ExpandableDot(widget.data),
             // Chart
-            Chart(data.dataA, width, chartHeight, Strings.labelA),
-            Chart(data.dataB, width, chartHeight, Strings.labelB),
-            Chart(data.dataQ1, width, chartHeight, Strings.labelQ1),
-            Chart(data.dataQ3, width, chartHeight, Strings.labelQ3),
-            Chart(data.dataT, width, chartHeight, Strings.labelT),
+            Chart(widget.data.dataA, width, chartHeight, Strings.labelA),
+            Chart(widget.data.dataB, width, chartHeight, Strings.labelB),
+            Chart(widget.data.dataQ1, width, chartHeight, Strings.labelQ1),
+            Chart(widget.data.dataQ3, width, chartHeight, Strings.labelQ3),
+            Chart(widget.data.dataT, width, chartHeight, Strings.labelT),
           ],
         ),
       ),
+    );
+  }
+}
+
+class ExpandableDot extends StatefulWidget {
+  final GCPData data;
+
+  const ExpandableDot(this.data, {super.key});
+
+  @override
+  State<ExpandableDot> createState() => _ExpandableDotState();
+}
+
+class _ExpandableDotState extends State<ExpandableDot> {
+  var _isDetailsShown = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _isDetailsShown = !_isDetailsShown;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32),
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [
+              0.0,
+              0.3,
+              0.7,
+              1.0
+            ],
+                colors: [
+              Colors.transparent,
+              Colors.black26,
+              Colors.black26,
+              Colors.transparent,
+            ])),
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // GCPDot
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Flexible(
+                    flex: 5,
+                    child: Description(widget.data.dataA.last),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Flexible(
+                    flex: 2,
+                    child: GcpDot(widget.data.dataA.last, 80),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 32,
+              ),
+              // Slider
+              AnimatedSize(
+                curve: Curves.easeIn,
+                duration: const Duration(milliseconds: 800),
+                child: _isDetailsShown
+                    ? const Align(
+                        alignment: Alignment.centerRight, child: GCPSlider())
+                    : const ArrowDown(),
+              ),
+            ]),
+      ),
+    );
+  }
+}
+
+class ArrowDown extends StatelessWidget {
+  const ArrowDown({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Icon(
+      Icons.keyboard_arrow_down_rounded,
+      color: Colors.white54,
     );
   }
 }
